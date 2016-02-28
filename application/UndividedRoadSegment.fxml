@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="371.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="371.0" prefWidth="420.0">
+         <children>
+            <HBox id="jurisdictionText" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="420.0" style="-fx-background-color: lightgrey;">
+               <children>
+                  <Label fx:id="roadText" maxWidth="1.7976931348623157E308" prefHeight="17.0" prefWidth="210.0" text="Road 1" />
+                  <Label fx:id="jurisdictionText" maxWidth="1.7976931348623157E308" text="Jurisdiction" />
+               </children>
+            </HBox>
+            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="420.0" style="-fx-background-color: lightgray;">
+               <children>
+                  <Label fx:id="facilityText" maxWidth="1.7976931348623157E308" prefHeight="17.0" prefWidth="210.0" text="Facility Type" />
+                  <Label fx:id="siteText" maxWidth="1.7976931348623157E308" text="Site Type" />
+               </children>
+            </HBox>
+            <TableView fx:id="resultTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="308.0" prefWidth="420.0">
+              <columns>
+                <TableColumn fx:id="nameCol" prefWidth="209.0" text="Recommended Countereasure" />
+                <TableColumn fx:id="numCol" prefWidth="210.0" text="Predicted Crash Reduction" />
+              </columns>
+            </TableView>
+            <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="53.0" prefWidth="420.0" style="-fx-background-color: lightgray;">
+               <children>
+                  <Button mnemonicParsing="false" text="Save" />
+                  <Button mnemonicParsing="false" text="Print" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</HBox>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.media.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: maroon;" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.GUI_Controller">
+   <children>
+      <VBox layoutX="14.0" layoutY="14.0" prefHeight="371.0" prefWidth="158.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
+         <children>
+            <Button fx:id="importButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#importData" prefHeight="97.0" prefWidth="158.0" style="-fx-border-color: dimgray; -fx-background-color: lightgray;" stylesheets="@application.css" text="Import Crash Data" VBox.vgrow="ALWAYS">
+               <effect>
+                  <Lighting diffuseConstant="1.29" specularConstant="1.37" specularExponent="32.86" surfaceScale="2.34">
+                     <bumpInput>
+                        <Shadow />
+                     </bumpInput>
+                     <light>
+                        <Light.Distant />
+                     </light>
+                  </Lighting>
+               </effect></Button>
+            <Button fx:id="viewButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#viewData" prefHeight="95.0" prefWidth="158.0" style="-fx-border-color: dimgray; -fx-background-color: lightgray;" text="View Data" VBox.vgrow="ALWAYS">
+               <effect>
+                  <Lighting diffuseConstant="1.29" specularConstant="1.37" specularExponent="32.86" surfaceScale="2.34">
+                     <bumpInput>
+                        <Shadow />
+                     </bumpInput>
+                     <light>
+                        <Light.Distant />
+                     </light>
+                  </Lighting>
+               </effect></Button>
+            <Button fx:id="analysisButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startAnalysis" prefHeight="97.0" prefWidth="164.0" style="-fx-background-color: lightgray; -fx-border-color: dimgray;" text="Conduct Analysis" VBox.vgrow="ALWAYS">
+               <effect>
+                  <Lighting diffuseConstant="1.29" specularConstant="1.37" specularExponent="32.86" surfaceScale="2.34">
+                     <bumpInput>
+                        <Shadow />
+                     </bumpInput>
+                     <light>
+                        <Light.Distant />
+                     </light>
+                  </Lighting>
+               </effect></Button>
+            <Button fx:id="checkCoutermeasureButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startCheck" prefHeight="87.0" prefWidth="167.0" style="-fx-background-color: lightgray; -fx-border-color: dimgray;" text="Determine Countermeasure Effectiveness" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
+               <effect>
+                  <Lighting diffuseConstant="1.29" specularConstant="1.37" specularExponent="32.86" surfaceScale="2.34">
+                     <bumpInput>
+                        <Shadow />
+                     </bumpInput>
+                     <light>
+                        <Light.Distant />
+                     </light>
+                  </Lighting>
+               </effect></Button>
+         </children>
+      </VBox>
+      <HBox fx:id="dialogPane" layoutX="172.0" layoutY="14.0" prefHeight="371.0" prefWidth="420.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="172.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="14.0">
+         <children>
+            <TableView fx:id="dataTable" prefHeight="382.0" prefWidth="453.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
