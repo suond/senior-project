@@ -507,9 +507,312 @@ public class GUI_Controller implements Initializable {
     				e.printStackTrace();
     			}
         			
-        	}
+        	} //end of undivided road segment controller
         	
-    	}
+        	else if (result2.isPresent() && result2.get()== "Unsignalized three-leg stop") {
+        		//used for storing input values
+        		String[] val1 = new String[9];
+        		boolean []flag = new boolean[2]; //flag[0] to stop future dialogs if cancel pressed
+        		//flag[1] used to check for lighting
+        		
+        		//get input strings
+        		Dialog<Pair<String[], boolean[]>> d = new Dialog<>();
+        		d.setTitle("Additional Information");
+        		d.setHeaderText("Please provide some additional information");
+        		ButtonType okType = new ButtonType("Next", ButtonData.OK_DONE);
+        		d.getDialogPane().getButtonTypes().addAll(okType, ButtonType.CANCEL);
+        		GridPane grid = new GridPane();
+        		grid.setHgap(10);
+        		grid.setVgap(10);
+        		grid.setPadding(new Insets(20, 150, 10, 10));
+        		
+        		TextField jurisdiction = new TextField();  //val[0]
+        		jurisdiction.setPromptText("Jurisdiction");
+        		
+        		TextField r1 = new TextField();  //val[1]
+        		r1.setPromptText("Main Road");
+        		
+        		//TextField length = new TextField(); //num of intersection leg (4 by default) 
+        		//length.setPromptText("Miles");
+        		
+        		TextField sDate = new TextField(); //type of traffic control (stop sign by default)
+        		sDate.setPromptText("Start Year");
+        		
+        		TextField eDate = new TextField(); //aadt major  
+        		eDate.setPromptText("End Year");
+        		
+        		TextField aadtMajor = new TextField();  //aadt minor  
+        		aadtMajor.setPromptText("AADT for major road");
+        		
+        		TextField aadtMinor = new TextField();  //intersection skew angle 
+        		aadtMinor.setPromptText("AADT for minor road");
+        		
+        		TextField iSkew = new TextField(); //# of left turn approaches
+        		iSkew.setPromptText("Skew in degree");
+        		
+        		TextField numLeft = new TextField();  //# of right turn approaches
+        		numLeft.setPromptText("valid int 0,1,2");
+        		
+        		TextField numRight = new TextField();  //presence of lighting
+        		numRight.setPromptText("valid int 0,1,2");
+        		
+        		
+        		//grid2.add(new Label("Horizontal Curve"),0,0);  add this as the last line of the grid
+        		HBox lighting = new HBox();
+        		RadioButton lightYes = new RadioButton("Yes");
+        		RadioButton lightNo = new RadioButton("No");
+        		ToggleGroup lightGroup = new ToggleGroup();
+        		lightYes.setToggleGroup(lightGroup);
+        		lightNo.setToggleGroup(lightGroup);
+        		lightNo.setSelected(true);
+        		lighting.getChildren().addAll(lightYes,lightNo);
+        		
+        		grid.add(jurisdiction,1,0);
+        		grid.add(r1, 1, 1);
+        		grid.add(sDate,1,2);
+        		grid.add(eDate,1,3);
+        		grid.add(aadtMajor, 1, 4);
+        		grid.add(aadtMinor,1,5);
+        		grid.add(iSkew,1,6);
+        		grid.add(numLeft,1,7);
+        		grid.add(numRight,1,8);
+        		grid.add(lighting,1,9);
+        		grid.add(new Label("Jurisdiction"),0,0);
+        		grid.add(new Label("Main Road"), 0, 1);
+        		grid.add(new Label("Start Year"), 0, 2);
+        		grid.add(new Label("End Year"), 0, 3);
+        		grid.add(new Label("AADT Major"), 0, 4);
+        		grid.add(new Label("AADT Minor"),0,5);
+        		grid.add(new Label("Intersection Skew"),0,6);
+        		grid.add(new Label("Number of left approaches"),0,7);
+        		grid.add(new Label("Number of right approaches"),0,8);
+        		grid.add(new Label("Lighting present?"),0,9);
+        		
+        		d.getDialogPane().setContent(grid);
+        		d.setResultConverter(dialogButton -> {
+        			if(dialogButton == okType){
+        				val1[0] = jurisdiction.getCharacters().toString();
+        				val1[1] = r1.getCharacters().toString();
+        				val1[2] = sDate.getCharacters().toString();
+        				val1[3] = eDate.getCharacters().toString();
+        				val1[4] = aadtMajor.getCharacters().toString();
+        				val1[5] = aadtMinor.getCharacters().toString();
+        				val1[6] = iSkew.getCharacters().toString();
+        				val1[7] = numLeft.getCharacters().toString();
+        				val1[8] = numRight.getCharacters().toString();
+        				
+        				flag[0]=false; //set flag
+        				RadioButton tmp = (RadioButton) lightGroup.getSelectedToggle();
+        				if(tmp.getText().equals("No"))
+        					flag[1] = false;
+        				else
+        					flag[1] = true;
+        			}
+        			return null;
+        		});
+        		d.showAndWait();
+        		if(flag[0])
+        			return;
+        		flag[0]=true;
+        		
+        		//Sanitize data
+        		if(val1[0] == null){
+        			val1[0] = "road";
+        		}
+        		if(val1[1] == null){
+        			val1[1] = "jurisdiction";
+        		}
+        	
+        		if(val1[4] == null || !isNumeric(val1[4])){
+        			val1[4] = "8000";
+        		}
+        		if(val1[5] == null || !isNumeric(val1[5])){
+        			val1[5] = "1000";
+        		}
+        		if(val1[6] == null || !isNumeric(val1[6])){
+        			val1[6] = "0";
+        		}
+        		if(val1[7] == null || !isNumeric(val1[7]) || Integer.parseInt(val1[7]) > 2){
+        			val1[7] = "0";
+        		}
+        		if(val1[8] == null || !isNumeric(val1[8])|| Integer.parseInt(val1[8]) > 2){
+        			val1[8] = "0";
+        		}
+        			
+        		//generate recommendations
+        		Pair<Double[],String[]> recs = ThreeLegStop.conductAnalysis(val1,flag);
+        		//load countermeasure display screen
+            	UndividedRoadController urc = new UndividedRoadController();
+    			FXMLLoader loader = new FXMLLoader(getClass().getResource("UndividedRoadSegment.fxml"));
+    			try {
+    				loader.setController(urc);
+    				Parent temp = (Parent) loader.load();
+    				dialogPane.getChildren().clear();
+    				dialogPane.getChildren().add(temp);
+    				urc.setJurisdiction(val1[0]);
+    				urc.setRoad(val1[1]);
+    				urc.setFacility("2-Lane Rural Highway");
+    				urc.setSite("Three Leg with Stop Control");
+    				urc.fillTable(recs);
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+        	} //end of 3 leg intersection
+        	
+        	
+        	else if (result2.isPresent() && result2.get()== "Unsignalized four-leg stop") {
+        		//used for storing input values
+        		String[] val1 = new String[9];
+        		boolean []flag = new boolean[2]; //flag[0] to stop future dialogs if cancel pressed
+        		//flag[1] used to check for lighting
+        		
+        		//get input strings
+        		Dialog<Pair<String[], boolean[]>> d = new Dialog<>();
+        		d.setTitle("Additional Information");
+        		d.setHeaderText("Please provide some additional information");
+        		ButtonType okType = new ButtonType("Next", ButtonData.OK_DONE);
+        		d.getDialogPane().getButtonTypes().addAll(okType, ButtonType.CANCEL);
+        		GridPane grid = new GridPane();
+        		grid.setHgap(10);
+        		grid.setVgap(10);
+        		grid.setPadding(new Insets(20, 150, 10, 10));
+        		
+        		TextField jurisdiction = new TextField();  //val[0]
+        		jurisdiction.setPromptText("Jurisdiction");
+        		
+        		TextField r1 = new TextField();  //val[1]
+        		r1.setPromptText("Main Road");
+        		
+        		//TextField length = new TextField(); //num of intersection leg (4 by default) 
+        		//length.setPromptText("Miles");
+        		
+        		TextField sDate = new TextField(); //type of traffic control (stop sign by default)
+        		sDate.setPromptText("Start Year");
+        		
+        		TextField eDate = new TextField(); //aadt major  
+        		eDate.setPromptText("End Year");
+        		
+        		TextField aadtMajor = new TextField();  //aadt minor  
+        		aadtMajor.setPromptText("AADT for major road");
+        		
+        		TextField aadtMinor = new TextField();  //intersection skew angle 
+        		aadtMinor.setPromptText("AADT for minor road");
+        		
+        		TextField iSkew = new TextField(); //# of left turn approaches
+        		iSkew.setPromptText("Skew in degree");
+        		
+        		TextField numLeft = new TextField();  //# of right turn approaches
+        		numLeft.setPromptText("valid int 0,1,2");
+        		
+        		TextField numRight = new TextField();  //presence of lighting
+        		numRight.setPromptText("valid int 0,1,2");
+        		
+        		
+        		//grid2.add(new Label("Horizontal Curve"),0,0);  add this as the last line of the grid
+        		HBox lighting = new HBox();
+        		RadioButton lightYes = new RadioButton("Yes");
+        		RadioButton lightNo = new RadioButton("No");
+        		ToggleGroup lightGroup = new ToggleGroup();
+        		lightYes.setToggleGroup(lightGroup);
+        		lightNo.setToggleGroup(lightGroup);
+        		lightNo.setSelected(true);
+        		lighting.getChildren().addAll(lightYes,lightNo);
+        		
+        		grid.add(jurisdiction,1,0);
+        		grid.add(r1, 1, 1);
+        		grid.add(sDate,1,2);
+        		grid.add(eDate,1,3);
+        		grid.add(aadtMajor, 1, 4);
+        		grid.add(aadtMinor,1,5);
+        		grid.add(iSkew,1,6);
+        		grid.add(numLeft,1,7);
+        		grid.add(numRight,1,8);
+        		grid.add(lighting,1,9);
+        		grid.add(new Label("Jurisdiction"),0,0);
+        		grid.add(new Label("Main Road"), 0, 1);
+        		grid.add(new Label("Start Year"), 0, 2);
+        		grid.add(new Label("End Year"), 0, 3);
+        		grid.add(new Label("AADT Major"), 0, 4);
+        		grid.add(new Label("AADT Minor"),0,5);
+        		grid.add(new Label("Intersection Skew"),0,6);
+        		grid.add(new Label("Number of left approaches"),0,7);
+        		grid.add(new Label("Number of right approaches"),0,8);
+        		grid.add(new Label("Lighting present?"),0,9);
+        		
+        		d.getDialogPane().setContent(grid);
+        		d.setResultConverter(dialogButton -> {
+        			if(dialogButton == okType){
+        				val1[0] = jurisdiction.getCharacters().toString();
+        				val1[1] = r1.getCharacters().toString();
+        				val1[2] = sDate.getCharacters().toString();
+        				val1[3] = eDate.getCharacters().toString();
+        				val1[4] = aadtMajor.getCharacters().toString();
+        				val1[5] = aadtMinor.getCharacters().toString();
+        				val1[6] = iSkew.getCharacters().toString();
+        				val1[7] = numLeft.getCharacters().toString();
+        				val1[8] = numRight.getCharacters().toString();
+        				
+        				flag[0]=false; //set flag
+        				RadioButton tmp = (RadioButton) lightGroup.getSelectedToggle();
+        				if(tmp.getText().equals("No"))
+        					flag[1] = false;
+        				else
+        					flag[1] = true;
+        			}
+        			return null;
+        		});
+        		d.showAndWait();
+        		if(flag[0])
+        			return;
+        		flag[0]=true;
+        		
+        		//Sanitize data
+        		if(val1[0] == null){
+        			val1[0] = "road";
+        		}
+        		if(val1[1] == null){
+        			val1[1] = "jurisdiction";
+        		}
+        	
+        		if(val1[4] == null || !isNumeric(val1[4])){
+        			val1[4] = "2000";
+        		}
+        		if(val1[5] == null || !isNumeric(val1[5])){
+        			val1[5] = "200";
+        		}
+        		if(val1[6] == null || !isNumeric(val1[6])){
+        			val1[6] = "0";
+        		}
+        		if(val1[7] == null || !isNumeric(val1[7]) || Integer.parseInt(val1[7]) > 2){
+        			val1[7] = "0";
+        		}
+        		if(val1[8] == null || !isNumeric(val1[8])|| Integer.parseInt(val1[8]) > 2){
+        			val1[8] = "0";
+        		}
+        			
+        		//generate recommendations
+        		Pair<Double[],String[]> recs = FourLegStop.conductAnalysis(val1,flag);
+        		//load countermeasure display screen
+            	UndividedRoadController urc = new UndividedRoadController();
+    			FXMLLoader loader = new FXMLLoader(getClass().getResource("UndividedRoadSegment.fxml"));
+    			try {
+    				loader.setController(urc);
+    				Parent temp = (Parent) loader.load();
+    				dialogPane.getChildren().clear();
+    				dialogPane.getChildren().add(temp);
+    				urc.setJurisdiction(val1[0]);
+    				urc.setRoad(val1[1]);
+    				urc.setFacility("2-Lane Rural Highway");
+    				urc.setSite("Four Leg with Stop Control");
+    				urc.fillTable(recs);
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+        	} //end of 4 leg intersection
+        	
+    	}// end of 2 lane rural
     	else if(result.get() == "Multi-Lane Rural Highway"){
     		List<String> ops2 = new ArrayList<>();
         	ops2.add("Four lane undivided road segment");
@@ -558,7 +861,7 @@ public class GUI_Controller implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		image = new Image("screen.jpg");
+		image = new Image("application/screen.jpg");
 		ImageView startScreen = new ImageView(image);
 		dialogPane.getChildren().clear();
 		dialogPane.getChildren().add(startScreen);
